@@ -122,8 +122,14 @@ module IndexModule =
       Writers.setStatus HTTP_404 >=> Files.browseFileHome "not_found.html"
     ]
 
+module SteoFile = 
+  let app =
+    Files.browseFileHome "files/hello.txt"
+
 [<EntryPoint>]
 let main argv =
   // startWebServer defaultConfig IndexModule.app
-  startWebServer defaultConfig (Successful.OK "Hello F# World from Suave!!!")
+  //startWebServer defaultConfig (Successful.OK "Hello F# World from Suave!!!")
+  // serving file...
+  startWebServer defaultConfig SteoFile.app
   0
