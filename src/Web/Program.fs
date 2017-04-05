@@ -155,8 +155,8 @@ module SteoRouteModule =
 
   let app: WebPart = 
     choose [
-      path "/hi" >=> HelloWorldModule.okRes
-      path "/bye" >=> HelloWorldModule.bye
+      path "/hi_old" >=> HelloWorldModule.okRes
+      path "/bye_old" >=> HelloWorldModule.bye
       path "/img" >=> SteoFile.showAPic "1.jpg"
       path "/never" >=> never >=> OK "I don't think I ever got here..."
       // the following are equivalent...
@@ -178,6 +178,10 @@ module SteoRouteModule =
         >> getImagePath
         >> Files.file
       )
+
+      // routing challenge
+      pathScan "/hi/%s" (fun x -> Successful.OK (sprintf "Hi, %s" x))
+      pathScan "/bye/%s" (fun y -> Successful.OK (sprintf "Bye, %s" y))
     ]
 
 [<EntryPoint>]
