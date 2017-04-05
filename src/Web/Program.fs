@@ -181,7 +181,7 @@ module SteoRouteModule =
 
       // routing challenge
       pathScan "/hi/%s" (fun x -> Successful.OK (sprintf "Hi, %s" x))
-      pathScan "/bye/%s" (fun y -> Successful.OK (sprintf "Bye, %s" y))
+      pathScan "/bye/%s" (fun y -> OK (sprintf "Bye, %s" y)) // or I can use the shorten version of only OK
     ]
 
 [<EntryPoint>]
