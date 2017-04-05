@@ -145,14 +145,21 @@ module SteoFile =
     Files.file (Path.Combine(rootPath, "cats", picName)) // and then http://localhost:8083/2.jpg to browse the file(s)
 
 module SteoRouteModule = 
+  open System.IO
   open Suave.Filters
   open Suave.Operators  // for the >=> (fsh? ) operator
+
+  let getImage imgName = 
+    Files.file(Path.Combine(SteoFile.rootPath, "cats", imgName))
 
   let app: WebPart = 
     choose [
       path "/hi" >=> HelloWorldModule.okRes
       path "/bye" >=> HelloWorldModule.bye
       path "/img" >=> SteoFile.showAPic "1.jpg"
+      //pathScan "/img/%i/image" (fun x -> getImage (sprintf "%i.jpg"  x))
+      // to not repeat
+      pathScan "/img/%i/image" (fun x -> SteoFile.showAPic (sprintf "%i.jpg"  x))
     ]
 
 [<EntryPoint>]
