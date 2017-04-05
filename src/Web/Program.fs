@@ -123,13 +123,29 @@ module IndexModule =
     ]
 
 module SteoFile = 
+  open System
+  open System.IO
+  open System.Reflection
+
+  let rootPath =
+    Assembly.GetExecutingAssembly().CodeBase
+    |> fun s -> (Uri s).AbsolutePath
+    |> Path.GetDirectoryName
+
   let app =
-    Files.browseFileHome "files/hello.txt"
+    //Files.browse (Path.Combine(rootPath, "files"))
+    //Files.browseFileHome "files/hello.txt"
+    Files.browseFile rootPath "files/hello.txt"
+
+  let showPic = 
+    //Files.browseFileHome "cats/1.jpg"
+    Files.browse (Path.Combine(rootPath, "cats")) // and then http://localhost:8083/2.jpg to browse the file(s)
 
 [<EntryPoint>]
 let main argv =
   // startWebServer defaultConfig IndexModule.app
   //startWebServer defaultConfig (Successful.OK "Hello F# World from Suave!!!")
   // serving file...
-  startWebServer defaultConfig SteoFile.app
+  //startWebServer defaultConfig SteoFile.app
+  startWebServer defaultConfig SteoFile.showPic
   0
