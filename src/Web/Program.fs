@@ -158,7 +158,13 @@ module SteoRouteModule =
       path "/hi" >=> HelloWorldModule.okRes
       path "/bye" >=> HelloWorldModule.bye
       path "/img" >=> SteoFile.showAPic "1.jpg"
-      path "never" >=> never >=> OK "I don't think I ever got here..."
+      path "/never" >=> never >=> OK "I don't think I ever got here..."
+      // the following are equivalent...
+      path "/never2" >=> (fun ctx -> 
+          printfn "never"   // just to log and verify that the route is actually called
+          fail) >=> OK "no return again... " // never is a Webpart that means... fail
+      // or we can see fail as a ... 
+      path "/never3" >=> (fun ctx -> async.Return(None: HttpContext option)) >=> OK "whatever ... " 
       //pathScan "/img/%i/image" (fun x -> getImage (sprintf "%i.jpg"  x))
       // to not repeat
       //pathScan "/img/%i/image" (fun x -> SteoFile.showAPic (sprintf "%i.jpg"  x))
