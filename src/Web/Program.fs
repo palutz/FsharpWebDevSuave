@@ -1,7 +1,7 @@
 open Suave
 
 module HelloWorldModule =
-  let okRes = Successful.OK "Hello World!"
+  let okRes = Successful.OK "Hello F# World!"
   let bye = Successful.OK "Goodbye World!"
 
 module FilesModule =
@@ -141,11 +141,22 @@ module SteoFile =
     //Files.browseFileHome "cats/1.jpg"
     Files.browse (Path.Combine(rootPath, "cats")) // and then http://localhost:8083/2.jpg to browse the file(s)
 
+module SteoRouteModule = 
+  open Suave.Filters
+  open Suave.Operators  // for the >=> (fsh? ) operator
+
+  let app: WebPart = 
+    choose [
+      path "/hi" >=> HelloWorldModule.okRes
+      path "/bye" >=> HelloWorldModule.bye
+    ]
+
 [<EntryPoint>]
 let main argv =
   // startWebServer defaultConfig IndexModule.app
   //startWebServer defaultConfig (Successful.OK "Hello F# World from Suave!!!")
   // serving file...
   //startWebServer defaultConfig SteoFile.app
-  startWebServer defaultConfig SteoFile.showPic
+  //startWebServer defaultConfig SteoFile.showPic
+  startWebServer defaultConfig SteoRouteModule.app
   0
