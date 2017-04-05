@@ -147,16 +147,18 @@ module SteoFile =
 module SteoRouteModule = 
   open System.IO
   open Suave.Filters
+  open Suave.Successful
   open Suave.Operators  // for the >=> (fsh? ) operator
 
-  let getImage imgName = 
-    Files.file(Path.Combine(SteoFile.rootPath, "cats", imgName))
+  let getImagePath imgName = 
+    Path.Combine(SteoFile.rootPath, "cats", imgName)
 
   let app: WebPart = 
     choose [
       path "/hi" >=> HelloWorldModule.okRes
       path "/bye" >=> HelloWorldModule.bye
       path "/img" >=> SteoFile.showAPic "1.jpg"
+      path "never" >=> never >=> OK "I don't think I ever got here..."
       //pathScan "/img/%i/image" (fun x -> getImage (sprintf "%i.jpg"  x))
       // to not repeat
       //pathScan "/img/%i/image" (fun x -> SteoFile.showAPic (sprintf "%i.jpg"  x))
@@ -167,7 +169,8 @@ module SteoRouteModule =
       // or even shorter
       pathScan "/img/%i/image" (
         sprintf "%i.jpg"
-        >> SteoFile.showAPic
+        >> getImagePath
+        >> Files.file
       )
     ]
 
