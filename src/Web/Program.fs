@@ -141,6 +141,9 @@ module SteoFile =
     //Files.browseFileHome "cats/1.jpg"
     Files.browse (Path.Combine(rootPath, "cats")) // and then http://localhost:8083/2.jpg to browse the file(s)
 
+  let showAPic picName = 
+    Files.file (Path.Combine(rootPath, "cats", picName)) // and then http://localhost:8083/2.jpg to browse the file(s)
+
 module SteoRouteModule = 
   open Suave.Filters
   open Suave.Operators  // for the >=> (fsh? ) operator
@@ -149,6 +152,7 @@ module SteoRouteModule =
     choose [
       path "/hi" >=> HelloWorldModule.okRes
       path "/bye" >=> HelloWorldModule.bye
+      path "/img" >=> SteoFile.showAPic "1.jpg"
     ]
 
 [<EntryPoint>]
