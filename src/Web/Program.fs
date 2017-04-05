@@ -182,6 +182,9 @@ module SteoRouteModule =
       // routing challenge
       pathScan "/hi/%s" (fun x -> Successful.OK (sprintf "Hi, %s" x))
       pathScan "/bye/%s" (fun y -> OK (sprintf "Bye, %s" y)) // or I can use the shorten version of only OK
+
+      request (fun r -> OK (sprintf "you requested %s" r.url.AbsolutePath))
+      context (fun c -> OK (sprintf "you requested %s" c.request.url.AbsolutePath))
     ]
 
 [<EntryPoint>]
