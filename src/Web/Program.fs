@@ -159,7 +159,16 @@ module SteoRouteModule =
       path "/img" >=> SteoFile.showAPic "1.jpg"
       //pathScan "/img/%i/image" (fun x -> getImage (sprintf "%i.jpg"  x))
       // to not repeat
-      pathScan "/img/%i/image" (fun x -> SteoFile.showAPic (sprintf "%i.jpg"  x))
+      //pathScan "/img/%i/image" (fun x -> SteoFile.showAPic (sprintf "%i.jpg"  x))
+      // point free notation
+      // pathScan "/img/%i/image" (fun x -> x
+      //   >> sprintf "%i.jpg"
+      //   >> SteoFile.showAPic)
+      // or even shorter
+      pathScan "/img/%i/image" (
+        sprintf "%i.jpg"
+        >> SteoFile.showAPic
+      )
     ]
 
 [<EntryPoint>]
