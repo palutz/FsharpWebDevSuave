@@ -226,6 +226,11 @@ module SteoRouteModule =
               }
           }
       )
+
+      // Second routing challenge - Default 404 page
+      // -- request (fun r -> Files.browseFileHome "notfound.html")
+
+      RequestErrors.NOT_FOUND "Not found"
     ]
 
 [<EntryPoint>]
