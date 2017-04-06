@@ -233,6 +233,26 @@ module SteoRouteModule =
       RequestErrors.NOT_FOUND "Not found"
     ]
 
+
+module SteoLazyModule =
+  open System
+  open Suave.Filters
+  open Suave.Successful
+  open Suave.Operators
+
+  // calling this module will evaluate all the code inside... it means that the eager part will be evaluate
+  // whilst the lazy one, thanks to the context function will be evaluated only when called
+  let app =
+    choose [
+      path "/eager" >=> OK (sprintf "%O" DateTimeOffset.Now) 
+      path "/lazy" >=> context (fun _ -> OK (sprintf "%O" DateTimeOffset.Now))
+      // timely greeting challenge - hi when even seconds, bye otherwise (uneven seconds)
+      path "/hibye" >=> context (fun _ -> 
+        let greet = if (DateTime.Now.Second % 2 = 0) then "Hi" else "Bye"
+        OK greet
+      )
+    ]
+
 [<EntryPoint>]
 let main argv =
   // startWebServer defaultConfig IndexModule.app
@@ -240,5 +260,6 @@ let main argv =
   // serving file...
   //startWebServer defaultConfig SteoFile.app
   //startWebServer defaultConfig SteoFile.showPic
-  startWebServer defaultConfig SteoRouteModule.app
+  //startWebServer defaultConfig SteoRouteModule.app
+  startWebServer defaultConfig SteoLazyModule.app
   0
