@@ -202,6 +202,30 @@ module SteoRouteModule =
       // let app = GET >=> path "/" >=> OK (string DateTime.Now)
       // with warbler allow the webserver to actual call the fucntion everytime it needs the result
       // let app = GET >=> path "/" >=> warbler (fun ctx -> OK (string DateTime.Now))
+
+      // *** WEBPART (in Suave) -> it's a function from Context to Async HttpContext option ***
+
+      path "/responses" >=> request (fun r ->
+          fun ctx -> async.Return(Some ctx)
+        )
+      // or... with Async Workflow
+      path "/responses2" >=> request (fun r ->
+          fun ctx -> async {
+            return Some ctx   // we need to add return in this case
+          }
+        )
+
+      path "/responses3" >=> request (fun r ->   // trying to return some data, so return the context and returns
+        let bs = "Hello" |> System.Text.Encoding.UTF8.GetBytes
+        fun ctx -> 
+          async {
+            return Some
+              {
+              // here we change the Context (ctx) to use the data we generated (the bytes array, bs)
+                ctx with response = { ctx.response with content = Bytes bs }
+              }
+          }
+      )
     ]
 
 [<EntryPoint>]
