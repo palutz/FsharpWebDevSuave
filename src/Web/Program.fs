@@ -257,12 +257,20 @@ module SteoIndexModule =
   open System
   open Suave
   open Suave.Successful
+  open Suave.RequestErrors
   open Suave.Operators
   open Suave.Filters
 
   let app = 
     choose [
-      path "/" >=> Files.browseFileHome "index.html"
+      // path "/" >=> Files.browseFileHome "index.html"
+      // or lazy evaluate it (read when it changes
+      GET >=> path "/" >=> context(fun _ -> Files.browseFileHome "index.html")
+      POST >=> request (fun r -> 
+        match r.formData "name" with   // using the Choice Monad
+        | Choice1Of2 name -> OK (sprintf "OK messagge got it!! Thanks, %s" name)
+        | Choice2Of2 error -> BAD_REQUEST error
+      )
     ]
 
 [<EntryPoint>]
