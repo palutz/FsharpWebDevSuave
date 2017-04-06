@@ -183,8 +183,20 @@ module SteoRouteModule =
       pathScan "/hi/%s" (fun x -> Successful.OK (sprintf "Hi, %s" x))
       pathScan "/bye/%s" (fun y -> OK (sprintf "Bye, %s" y)) // or I can use the shorten version of only OK
 
-      request (fun r -> OK (sprintf "you requested %s" r.url.AbsolutePath))
-      context (fun c -> OK (sprintf "you requested %s" c.request.url.AbsolutePath))
+      never >=> request (fun r -> OK (sprintf "you requested %s" r.url.AbsolutePath))  // never call/use this
+      // we want to change the context ...
+      // context (fun c -> OK (sprintf "you requested %s" c.request.url.AbsolutePath))
+      path "/context" >=> context (fun c -> 
+        let state =
+          c.userState 
+          // ERROR - userState is a Map<string, obj> so we need to box the 2nd string to obj
+          //|> Map.add "message" (sprintf "you requested %s" c.request.url.AbsolutePath) 
+          |> Map.add "message" (sprintf "you requested (ctx) %s" c.request.url.AbsolutePath :> obj)  // or ... |> obj (:> = cast operator)
+        // NOT working = we need to return a HttpContext Async
+        //async.Return(Some { c with userState = state })  // we want to change the state 
+        // we need to box cause we need to return a HttpContext -> Asynx<HttpContext option> instead we hane Asynx<'a>
+        fun ctx -> async.Return(Some { ctx with userState = state }) // so we need to wrap it up (using a function) .. c and ctx are the same context
+      )
     ]
 
 [<EntryPoint>]
