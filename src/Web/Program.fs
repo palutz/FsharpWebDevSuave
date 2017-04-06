@@ -267,10 +267,17 @@ module SteoIndexModule =
       // or lazy evaluate it (read when it changes
       GET >=> path "/" >=> context(fun _ -> Files.browseFileHome "index.html")
       POST >=> request (fun r -> 
-        match r.formData "name" with   // using the Choice Monad
-        | Choice1Of2 name -> OK (sprintf "OK messagge got it!! Thanks, %s" name)
-        | Choice2Of2 error -> BAD_REQUEST error
+        match r.formData "name" with   // using the Choice Monad   (use name2 or a wrong string to checkl the error..
+        | Choice1Of2 name when name.Length > 0 -> OK (sprintf "OK messagge got it!! Thanks, %s" name)
+        | Choice1Of2 _ -> BAD_REQUEST "Please provide your name"
+        | Choice2Of2 error -> BAD_REQUEST error   // provided by Suave
       )
+      // challenge 
+      GET >=> path "/index.html" >=> context(fun _ -> Files.browseFileHome "index.html")
+      // NOT_FOUND take a string but we can override it by telling the file applicative to write its own context 
+      // NOT_FOUND "" >=> Files.browseFileHome "not_found.html"
+      // using this way, instead so we don't have to use an empty string
+      Writers.setStatus HTTP_404 >=> Files.browseFileHome "not_found.html"
     ]
 
 [<EntryPoint>]
