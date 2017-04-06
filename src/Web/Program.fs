@@ -253,6 +253,18 @@ module SteoLazyModule =
       )
     ]
 
+module SteoIndexModule =
+  open System
+  open Suave
+  open Suave.Successful
+  open Suave.Operators
+  open Suave.Filters
+
+  let app = 
+    choose [
+      path "/" >=> Files.browseFileHome "index.html"
+    ]
+
 [<EntryPoint>]
 let main argv =
   // startWebServer defaultConfig IndexModule.app
@@ -261,5 +273,6 @@ let main argv =
   //startWebServer defaultConfig SteoFile.app
   //startWebServer defaultConfig SteoFile.showPic
   //startWebServer defaultConfig SteoRouteModule.app
-  startWebServer defaultConfig SteoLazyModule.app
+  //startWebServer defaultConfig SteoLazyModule.app
+  startWebServer defaultConfig SteoIndexModule.app
   0
