@@ -196,7 +196,12 @@ module SteoRouteModule =
         //async.Return(Some { c with userState = state })  // we want to change the state 
         // we need to box cause we need to return a HttpContext -> Asynx<HttpContext option> instead we hane Asynx<'a>
         fun ctx -> async.Return(Some { ctx with userState = state }) // so we need to wrap it up (using a function) .. c and ctx are the same context
-      )
+      ) >=> warbler (fun ctx -> OK (ctx.userState.["message"] :?> string)) // using warbler, a generic function (request and context are specialized warbler(s)),
+      // that defer the execution of the webpart passed to (webpart is the base block of Suave)
+      //eg: this minimal webserver print always the same datetime (when the server is started):
+      // let app = GET >=> path "/" >=> OK (string DateTime.Now)
+      // with warbler allow the webserver to actual call the fucntion everytime it needs the result
+      // let app = GET >=> path "/" >=> warbler (fun ctx -> OK (string DateTime.Now))
     ]
 
 [<EntryPoint>]
