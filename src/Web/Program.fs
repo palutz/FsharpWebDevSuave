@@ -35,9 +35,12 @@ module RoutingModule =
     choose [
       path "/hi" >=> HelloWorldModule.okRes
       path "/bye" >=> HelloWorldModule.bye
+      // never routing: equivalent as never returning
       path "/never" >=> never >=> OK "DID RETURN?"
-      path "/never2" >=> (fun ctx -> fail) >=> OK "DID RETURN?"
-      path "/never2" >=> (fun ctx -> async.Return(None : HttpContext option)) >=> OK "DID RETURN?"
+      path "/never2" >=> (fun ctx -> fail) >=> OK "DID RETURN?"  // never is still a webpart returning fail
+      // fail is nothing else than a fun returning (async) None of type HttpContext option
+      path "/never2" >=> (fun ctx -> async.Return(None : HttpContext option)) >=> OK "DID RETURN?"  
+      // never routing end
       path "/cat" >=> Files.file (aCat "3.jpg")
       pathScan "/cats/%i/image" (
         sprintf "%i.jpg"
